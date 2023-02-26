@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  postgres-container:
+    container_name: ptk_db
+    image: postgres:alpine
+    restart: unless-stopped
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+
+  mail-server:
+    image : maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
