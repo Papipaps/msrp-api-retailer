@@ -13,11 +13,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -80,13 +82,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and();
 
-         http.authorizeRequests().anyRequest().permitAll();
+         http.authorizeRequests().
+                 anyRequest().permitAll();
 
         //token filter
         http.addFilterAfter(apiKeyFilter, BasicAuthenticationFilter.class);
 
     }
 
-
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .dispatcherTypeMatchers(DispatcherType.ERROR)
+                .mvcMatchers("/api/auth/**");
+    }
 }
 

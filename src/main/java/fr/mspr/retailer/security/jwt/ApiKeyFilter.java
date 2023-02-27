@@ -41,7 +41,6 @@ public class ApiKeyFilter extends GenericFilterBean {
             return;
         }
 
-
         String token = req.getHeader("APIKEY") == null ? "" : req.getHeader("APIKEY");
         LOG.info("Trying token: " + token);
 

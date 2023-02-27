@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -49,26 +50,25 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
         String qrImage = "";
         String logoImage = "";
-        String token = link.split("=")[1].replace("/","");
+        String token = link.split("=")[1].replace("/", "");
         if (byteImage != null) {
             String base64Image = Base64.getEncoder().encodeToString(byteImage);
             qrImage = String.format("<img style=\"width: 200px;\" src=\"data:image/png;base64,%s\" alt=\"qrcode\"/>\n", base64Image);
         }
 
         InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream("src/main/resources/static/ptk_logo.png");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        inputStream = ClassLoader.class.getResourceAsStream("ptk_logo.png");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
-            outputStream.write(inputStream.readAllBytes());
-            logoImage = String.format("<img src=\"data:image/png;base64,%s\" alt=\"Logo\" border=\"0\"  style=\"display: block; width: 100px; min-width: 50px;\">\n",
-                    Base64.getEncoder().encodeToString(outputStream.toByteArray()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (inputStream != null) {
+            try {
+                outputStream.write(inputStream.readAllBytes());
+                logoImage = String.format("<img src=\"data:image/png;base64,%s\" alt=\"Logo\" border=\"0\"  style=\"display: block; width: 100px; min-width: 50px;\">\n",
+                        Base64.getEncoder().encodeToString(outputStream.toByteArray()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
 
         String htmlTemplate = " \n" +
                 "<body style=\"background-color: white; padding: 0px;;\"> \n" +
@@ -131,7 +131,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
                 "          <tr>\n" +
                 "            <td align=\"left\" bgcolor=\"#ffffff\" style=\"padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;\">\n" +
                 "              <p style=\"margin: 0;\">(Si l'image ne charge pas, vous pouvez copier ce jeton dans votre presse papier et remplir le champ adéquat dans l'application).</p>\n" +
-                "              <p style=\"margin:20px 0px; background: rgb(235, 235, 235);\">"+token+"</p>\n" +
+                "              <p style=\"margin:20px 0px; background: rgb(235, 235, 235);\">" + token + "</p>\n" +
                 "              <p style=\"margin: 0;\"><strong>ATTENTION : </strong> ne partagez sous aucun prétexte ce jeton.</p>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +

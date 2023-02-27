@@ -28,38 +28,42 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
     @NotBlank
-    @Length(min = 6)
-    private String password;
-    @NotBlank
+    @Length(min = 6, max = 30)
+    @Column(unique = true)
     private String username;
     @NotBlank
+    @Length(min = 2, max = 40)
+    private String firstName;
+    @NotBlank
+    @Length(min = 2, max = 40)
+    private String lastName;
+    @NotBlank
+    @Length(max = 60)
     @Email
+    @Column(unique = true)
     private String email;
+    @NotBlank
+    @Length(min = 2, max = 15)
+    private String postalCode;
+    @NotBlank
+    @Length(min = 2, max = 40)
+    private String city;
+
+    @Length(min = 6)
+    private String password;
 
     @Enumerated(EnumType.STRING)
     private RoleEnum roles;
     @OneToMany(targetEntity = Order.class, fetch = FetchType.LAZY)
     private Collection<Order> orders;
     private LocalDateTime createdAt;
-    private String firstName;
-    private String lastName;
-    private String postalCode;
-    private String city;
+
     private String companyName;
 
     private boolean isActive;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Profile profile = (Profile) o;
-        return id == profile.id && Objects.equals(password, profile.password) && username.equals(profile.username) && roles == profile.roles && Objects.equals(orders, profile.orders) && Objects.equals(createdAt, profile.createdAt) && Objects.equals(firstName, profile.firstName) && Objects.equals(lastName, profile.lastName) && Objects.equals(postalCode, profile.postalCode) && Objects.equals(city, profile.city) && Objects.equals(companyName, profile.companyName);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, password, username, roles, orders, createdAt, firstName, lastName, postalCode, city, companyName);
-    }
+
 }

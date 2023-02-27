@@ -27,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootApplication
 @RestController
@@ -39,7 +40,7 @@ public class DemoApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-//		initUsers();
+		initUsers();
 	}
 
 	@Autowired
@@ -82,8 +83,7 @@ public class DemoApplication implements CommandLineRunner {
 						.build();
 				productRepository.save(product);
 			});
-
-			Arrays.asList(customersList).forEach(dto -> {
+			Arrays.stream(customersList).distinct().forEach(dto -> {
 				ArrayList<Order> dtoOrders = dto.getOrders();
 				List<Order> orders = dtoOrders == null || dtoOrders.isEmpty() ? null : orderRepository.saveAll(dtoOrders);
 				Profile profile = Profile.builder()
@@ -91,6 +91,7 @@ public class DemoApplication implements CommandLineRunner {
 						.password(new BCryptPasswordEncoder().encode("secret"))
 						.roles(RoleEnum.USER)
 						.orders(orders)
+						.email(UUID.randomUUID().toString().split("-")[0]+"@yopmail.com")
 						.createdAt(dto.getCreatedAt())
 						.firstName(dto.getFirstName())
 						.lastName(dto.getLastName())
@@ -100,7 +101,6 @@ public class DemoApplication implements CommandLineRunner {
 						.build();
 				profileRepository.save(profile);
 			});
-			System.out.println(customersList[0] + " " + productDTOS[0]);
 
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);

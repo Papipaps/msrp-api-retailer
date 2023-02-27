@@ -1,7 +1,28 @@
 version: "3.9"
 
 services:
-  postgres-container:
+  app-retailer-service:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    depends_on:
+      - ptk_db
+    environment:
+      - app_mailsender_port=${MAILSENDER_PORT}
+      - app_mailsender_host=${MAILSENDER_HOST}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ptk_db:${PG_PORT}/${PG_DATABASE}
+      - spring_datasource_username=${PG_USER}
+      - spring_datasource_password=${PG_PASSWORD}
+      - spring_datasource_driver-class-name=${DRIVER_CLASS}
+      - api_key=${API_KEY}
+      - app_customers_api-url=https://615f5fb4f7254d0017068109.mockapi.io/api/v1/customers
+      - app_products_api-url=https://615f5fb4f7254d0017068109.mockapi.io/api/v1/products
+      - server_port=8081
+      - spring_jpa_hibernate_ddl-auto=create-drop
+      - spring_jpa_properties_hibernate_format_sql=true
+      - spring_jpa_properties_hibernate_dialect=org.hibernate.dialect.PostgreSQL95Dialect
+  ptk_db:
     container_name: ptk_db
     image: postgres:alpine
     restart: unless-stopped
@@ -17,7 +38,15 @@ services:
       - ./database/data:/var/lib/postgresql/data
 
   mail-server:
-    image : maildev/maildev
+    image: maildev/maildev
     ports:
       - "1080:1080"
       - "1025:1025"
+  pg-admin:
+    image: dpage/pgadmin4:6.20
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+
