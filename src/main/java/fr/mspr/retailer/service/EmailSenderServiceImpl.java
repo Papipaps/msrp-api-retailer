@@ -1,16 +1,13 @@
 package fr.mspr.retailer.service;
 
-import fr.mspr.retailer.repository.ProfileRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import reactor.util.annotation.Nullable;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -23,8 +20,6 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(EmailSenderServiceImpl.class);
     @Autowired
-    private ProfileRepository profileRepository;
-    @Autowired
     private final JavaMailSender javaMailSender;
 
     @Override
@@ -36,7 +31,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your registration");
-            helper.setFrom("jojosender@yopmail.com");
+            helper.setFrom("payetonkawa-noreply@yopmail.com");
 
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {

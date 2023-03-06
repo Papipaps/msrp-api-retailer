@@ -7,24 +7,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class CustomerDTO {
+public class CustomerDTO extends BaseDTO {
 
-    private long id;
+    private Long id;
     private LocalDateTime createdAt;
     private String name;
+    private String email;
     private String username;
     private String firstName;
     private String lastName;
-    private Adress address;
-    private Company company ;
-    private ArrayList<Order> orders;
+    private Address address;
+    private Company company;
+    private List<Order> orders;
 
     @Override
     public boolean equals(Object o) {

@@ -1,36 +1,30 @@
 package fr.mspr.retailer.utils.mapper;
 
-import fr.mspr.retailer.data.dto.Adress;
-import fr.mspr.retailer.data.dto.Company;
 import fr.mspr.retailer.data.dto.CustomerDTO;
-import fr.mspr.retailer.data.model.Order;
+import fr.mspr.retailer.data.dto.ProductDTO;
+import fr.mspr.retailer.data.model.Product;
 import fr.mspr.retailer.data.model.Profile;
+import org.mapstruct.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
-public class ProfileMapper {
+@Mapper(componentModel = "spring")
+public interface ProfileMapper {
 
-     public static CustomerDTO toCustomerDTO(Profile profile) {
-         Collection<Order> orders = profile.getOrders();
-         return CustomerDTO.builder()
-                     .id(profile.getId())
-                     .name(profile.getFirstName() + " " + profile.getLastName())
-                     .username(profile.getUsername())
-                     .firstName(profile.getFirstName())
-                     .lastName(profile.getLastName())
-                     .address(Adress.builder()
-                             .city(profile.getCity())
-                             .postalCode(profile.getPostalCode())
-                             .build())
-                     .company(Company.builder()
-                             .companyName(profile.getCompanyName())
-                             .build())
-                     .orders(new ArrayList<>(orders))
-                     .createdAt(profile.getCreatedAt())
-                     .build();
+    @Mapping(source = "address.postalCode",target = "postalCode")
+    @Mapping(source = "address.city",target = "city")
+    @Mapping(source = "company.companyName",target = "companyName")
+    Profile toEntity(CustomerDTO customerDTO);
+    @Mapping(target = "address.postalCode",source = "postalCode")
+    @Mapping(target = "address.city",source = "city")
+    @Mapping(target = "company.companyName",source = "companyName")
+    CustomerDTO toDTO(Profile profile);
+    List<Profile> toEntities(List<CustomerDTO> customerDTOS);
+    List<CustomerDTO> toDTOs(List<Profile> profiles);
+    @Mapping(source = "address.postalCode",target = "postalCode")
+    @Mapping(source = "address.city",target = "city")
+    @Mapping(source = "company.companyName",target = "companyName")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Profile updateProfileFromDTO(CustomerDTO customerDTO, @MappingTarget Profile profile);
 
-     }
-
-
- }
+}

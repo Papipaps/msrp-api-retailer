@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Data
 @JsonInclude
-public class RegistrationDTO {
+public class RegistrationDTO extends BaseDTO {
 
     @NotBlank
     @Length(min = 6, max = 30)
@@ -37,5 +37,8 @@ public class RegistrationDTO {
     @NotBlank
     @Length(min = 2, max = 40)
     private String city;
+    @NotBlank
+    @Length(min = 2, max = 40)
+    private String companyName;
 
 }

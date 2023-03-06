@@ -15,9 +15,8 @@ services:
       - spring_datasource_username=${PG_USER}
       - spring_datasource_password=${PG_PASSWORD}
       - spring_datasource_driver-class-name=${DRIVER_CLASS}
-      - api_key=${API_KEY}
-      - app_customers_api-url=https://615f5fb4f7254d0017068109.mockapi.io/api/v1/customers
-      - app_products_api-url=https://615f5fb4f7254d0017068109.mockapi.io/api/v1/products
+      - app_customers_api-url=${APICUSTOMERS_URL}
+      - app_products_api-url=${APIPRODUCTS_URL}
       - server_port=8081
       - spring_jpa_hibernate_ddl-auto=create-drop
       - spring_jpa_properties_hibernate_format_sql=true
@@ -36,6 +35,8 @@ services:
       POSTGRES_DB: ${PG_DATABASE}
     volumes:
       - ./database/data:/var/lib/postgresql/data
+      - ./database/init_db.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./database/init_entities.sql:/docker-entrypoint-initdb.d/2.sql
 
   mail-server:
     image: maildev/maildev

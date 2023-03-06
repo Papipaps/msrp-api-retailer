@@ -1,34 +1,27 @@
 package fr.mspr.retailer.service;
 
+import fr.mspr.retailer.data.dto.CustomerDTO;
 import fr.mspr.retailer.data.model.Profile;
 import fr.mspr.retailer.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
-public class ProfileService {
+public interface ProfileService {
 
-    @Autowired
-    private ProfileRepository profileRepository;
+    boolean activeAccount(long id);
 
-    @Transactional
-    public boolean activeAccount(long id) {
-        Optional<Profile> optionalProfile = profileRepository.findById(id);
+    CustomerDTO getProfileById(long id);
 
-        if (optionalProfile.isEmpty()) {
-            throw new IllegalArgumentException("");
-        }
+    Page<CustomerDTO> getProfils(Pageable pageable);
 
-        Profile profile = optionalProfile.get();
+    CustomerDTO updateProfile(CustomerDTO customerDTO);
 
-        if (profile.isActive()) {
-            throw new IllegalArgumentException("");
-        }
-        profile.setActive(true);
-        return true;
-    }
+    boolean deleteProfile(long id);
 
 }

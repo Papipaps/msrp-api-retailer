@@ -16,7 +16,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ConfirmationToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(
+            sequenceName = "token_sequence"
+            , name = "token_sequence"
+            , allocationSize = 1)
+    @GeneratedValue(
+            generator = "token_sequence"
+            , strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(nullable = false)
     private String token;
@@ -37,7 +43,7 @@ public class ConfirmationToken {
             , LocalDateTime createdAt
             , LocalDateTime expiresAt
             , LocalDateTime confirmedAt
-    ,Profile profile) {
+            , Profile profile) {
 
         this.token = token;
         this.createdAt = createdAt;

@@ -2,33 +2,30 @@ package fr.mspr.retailer.controller;
 
 import com.google.zxing.WriterException;
 import fr.mspr.retailer.data.dto.BaseDTO;
-import fr.mspr.retailer.data.dto.CustomerDTO;
 import fr.mspr.retailer.data.dto.RegistrationDTO;
+import fr.mspr.retailer.data.model.Order;
+import fr.mspr.retailer.data.model.Product;
 import fr.mspr.retailer.data.model.Profile;
 import fr.mspr.retailer.data.model.RoleEnum;
+import fr.mspr.retailer.repository.OrderRepository;
+import fr.mspr.retailer.repository.ProductRepository;
 import fr.mspr.retailer.repository.ProfileRepository;
 import fr.mspr.retailer.security.token.ConfirmationToken;
 import fr.mspr.retailer.security.token.ConfirmationTokenService;
 import fr.mspr.retailer.service.EmailSenderService;
 import fr.mspr.retailer.utils.QRCodeUtils;
-import fr.mspr.retailer.utils.exception.ValidationExceptionHandler;
-import fr.mspr.retailer.utils.mapper.ProfileMapper;
 import fr.mspr.retailer.utils.mapper.RegistrationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.Validator;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,6 +38,11 @@ public class AuthController {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private EmailSenderService emailSenderService;
@@ -61,14 +63,18 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new BaseDTO(true, errorMsg, null));
         }
         String token = UUID.randomUUID().toString();
-        Profile profile = profileRepository.save(registrationMapper.toProfile(registrationDTO));
+        Profile profile = registrationMapper.toProfile(registrationDTO);
+        profile.setRoles(RoleEnum.ROLE_USER);
+        profile.setCreatedAt(LocalDateTime.now());
 
+
+        Profile save = profileRepository.save(profile);
         ConfirmationToken confirmationToken = ConfirmationToken.builder()
                 .token(token)
                 .createdAt(LocalDateTime.now())
                 .expiresAt(LocalDateTime.now().plusDays(2))
                 .confirmedAt(null)
-                .profile(profile)
+                .profile(save)
                 .build();
 
         ConfirmationToken savedToken = confirmationTokenService.saveConfirmationToken(confirmationToken);
@@ -87,7 +93,7 @@ public class AuthController {
     }
 
     @GetMapping("confirm")
-    public String confirmToken(@RequestParam String token) {
-        return confirmationTokenService.confirmToken(token);
+    public String confirmToken(@RequestParam String token, HttpServletResponse response) {
+        return confirmationTokenService.confirmToken(token, response);
     }
 }

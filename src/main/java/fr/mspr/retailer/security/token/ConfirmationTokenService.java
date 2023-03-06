@@ -5,6 +5,7 @@ import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
 @Service
@@ -20,7 +21,7 @@ public class ConfirmationTokenService {
         return confirmationTokenRepository.save(token);
     }
 
-    public String confirmToken(String token) {
+    public String confirmToken(String token, HttpServletResponse response) {
         ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token).orElseThrow(() -> new IllegalStateException("Token not found"));
 
         if (confirmationToken.getConfirmedAt() != null) {
@@ -35,6 +36,8 @@ public class ConfirmationTokenService {
 
         confirmationToken.setConfirmedAt(LocalDateTime.now());
         profileService.activeAccount(confirmationToken.getProfile().getId());
+
+        response.setHeader("token",token);
 
         return "confirmed";
 

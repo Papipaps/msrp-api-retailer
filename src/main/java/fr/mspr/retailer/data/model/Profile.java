@@ -1,34 +1,35 @@
 package fr.mspr.retailer.data.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 @Data
 @Builder
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class Profile {
 
-    public Profile(String password, String username, Collection<Role> roles) {
-        this.password = password;
-        this.username = username;
-    }
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
+    @SequenceGenerator(
+            name = "profile_sequence",
+            sequenceName = "profile_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            generator = "profile_sequence",
+            strategy = GenerationType.SEQUENCE)
+    private Long id;
     @NotBlank
     @Length(min = 6, max = 30)
     @Column(unique = true)
@@ -51,19 +52,18 @@ public class Profile {
     @Length(min = 2, max = 40)
     private String city;
 
-    @Length(min = 6)
-    private String password;
-
     @Enumerated(EnumType.STRING)
     private RoleEnum roles;
-    @OneToMany(targetEntity = Order.class, fetch = FetchType.LAZY)
-    private Collection<Order> orders;
     private LocalDateTime createdAt;
-
+    @NotBlank
+    @Length(min = 2, max = 40)
     private String companyName;
 
     private boolean isActive;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "profile")
+    @JsonManagedReference(value = "profile-reference")
+    private Set<Order> orders;
 
 
 }
