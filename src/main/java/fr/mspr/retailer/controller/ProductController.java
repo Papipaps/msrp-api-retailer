@@ -4,15 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import fr.mspr.retailer.data.dto.OrderDTO;
 import fr.mspr.retailer.data.dto.ProductDTO;
-import fr.mspr.retailer.data.model.Order;
 import fr.mspr.retailer.data.model.Profile;
-import fr.mspr.retailer.data.model.RoleEnum;
 import fr.mspr.retailer.repository.ProfileRepository;
-import fr.mspr.retailer.security.token.ConfirmationToken;
 import fr.mspr.retailer.security.token.ConfirmationTokenRepository;
 import fr.mspr.retailer.service.ProductService;
+import fr.mspr.retailer.utils.AuthorizationHelper;
 import fr.mspr.retailer.utils.ListToPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,10 +23,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/retailer/product")
@@ -45,6 +40,9 @@ public class ProductController {
 
     @Autowired
     private ConfirmationTokenRepository confirmationTokenRepository;
+
+    @Autowired
+    private AuthorizationHelper authHelper;
 
 
     @GetMapping("mock/get/{id}")
@@ -113,10 +111,10 @@ public class ProductController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addProduct(@RequestBody ProductDTO productDTO, ServletRequest request) {
-        Profile profile = getProfileFromToken(request);
-        boolean isAdmin = isAdmin(profile.getId());
+        Profile profile = authHelper.getProfileFromToken(request);
+        boolean isAdmin = authHelper.isAdmin(profile.getId());
         if (!isAdmin) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You're not allowed to do this operation");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error:", "You're not allowed to do this operation"));
         }
 
         ProductDTO res = productService.addProduct(productDTO);
@@ -125,10 +123,10 @@ public class ProductController {
 
     @PatchMapping("update")
     public ResponseEntity<?> updateProduct(@RequestBody ProductDTO productDTO, ServletRequest request) {
-        Profile profile = getProfileFromToken(request);
-        boolean isAdmin = isAdmin(profile.getId());
+        Profile profile = authHelper.getProfileFromToken(request);
+        boolean isAdmin = authHelper.isAdmin(profile.getId());
         if (!isAdmin) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You're not allowed to do this operation");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error:", "You're not allowed to do this operation"));
         }
 
         ProductDTO product = productService.updateProduct(productDTO);
@@ -137,42 +135,15 @@ public class ProductController {
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> deleteProfuct(@PathVariable long id, ServletRequest request) {
-        Profile profile = getProfileFromToken(request);
-        boolean isAdmin = isAdmin(profile.getId());
+        Profile profile = authHelper.getProfileFromToken(request);
+        boolean isAdmin = authHelper.isAdmin(profile.getId());
         if (!isAdmin) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You're not allowed to do this operation");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error:", "You're not allowed to do this operation"));
         }
 
         boolean b = productService.deleteProduct(id);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(b);
     }
 
-//    @PostMapping("placeOrder")
-//    public ResponseEntity<Boolean> placeOrder(@RequestBody OrderDTO orderDTO, ServletRequest request) {
-//        Profile profile = getProfileFromToken(request);
-//        return ResponseEntity.ok().body(productService.placeOrder(orderDTO, profile.getId()));
-//
-//    }
 
-    private Profile getProfileFromToken(ServletRequest request) {
-        HttpServletRequest req = (HttpServletRequest) request;
-
-        String apikey = req.getHeader("APIKEY");
-        Optional<ConfirmationToken> token = confirmationTokenRepository.findByToken(apikey);
-        return token.get().getProfile();
-    }
-
-    private boolean isAdmin(Long profileId) {
-        if (profileId != null) {
-            Optional<Profile> profileOptional = profileRepository.findById(profileId);
-            if (profileOptional.isEmpty()) {
-                throw new RuntimeException("Error : user not in db");
-            }
-
-            Profile profile = profileOptional.get();
-            return profile.getRoles() == RoleEnum.ROLE_ADMIN;
-        }
-        throw new RuntimeException("Error : id cannot be null");
-
-    }
 }

@@ -32,19 +32,19 @@ public class ApiKeyFilter extends GenericFilterBean {
         HttpServletRequest req = (HttpServletRequest) request;
         String path = req.getRequestURI();
 
-        if (path.startsWith("/api/auth") || path.startsWith("/v2/api-docs") || path.startsWith("/swagger-ui") ) {
-            chain.doFilter(request,response);
+        if (path.startsWith("/api/auth") || path.startsWith("/v2/api-docs") || path.startsWith("/swagger-ui")) {
+            chain.doFilter(request, response);
             return;
         }
 
-        String token = req.getHeader("APIKEY") == null ? "" : req.getHeader("APIKEY");
+        String token = req.getHeader("token") == null ? "" : req.getHeader("token");
         LOG.info("Trying token: " + token);
 
-        Optional<ConfirmationToken> confirmationToken = confirmationTokenRepository.findByToken(token);
+        ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token).orElse(null);
 
-        if (confirmationToken.isPresent()
-                && confirmationToken.get().getConfirmedAt() != null
-                && confirmationToken.get().getProfile().isActive()) {
+        if (confirmationToken != null
+                && confirmationToken.getConfirmedAt() != null
+                && confirmationToken.getProfile().isActive()) {
             chain.doFilter(request, response);
         } else {
             HttpServletResponse resp = (HttpServletResponse) response;

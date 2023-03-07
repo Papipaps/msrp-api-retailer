@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,12 +27,14 @@ public class ConfirmationToken {
             , strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(nullable = false)
+    @Length(min = 16, max = 64)
     private String token;
     @Column(nullable = false)
     private LocalDateTime createdAt;
     @Column(nullable = false)
     private LocalDateTime expiresAt;
     private LocalDateTime confirmedAt;
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(
@@ -39,16 +43,4 @@ public class ConfirmationToken {
     )
     private Profile profile;
 
-    public ConfirmationToken(String token
-            , LocalDateTime createdAt
-            , LocalDateTime expiresAt
-            , LocalDateTime confirmedAt
-            , Profile profile) {
-
-        this.token = token;
-        this.createdAt = createdAt;
-        this.expiresAt = expiresAt;
-        this.confirmedAt = confirmedAt;
-        this.profile = profile;
-    }
 }

@@ -61,7 +61,7 @@ public class Profile {
 
     private boolean isActive;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "profile")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "profile")
     @JsonManagedReference(value = "profile-reference")
     private Set<Order> orders;
 

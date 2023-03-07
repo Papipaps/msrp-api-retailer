@@ -22,10 +22,11 @@ CREATE TABLE IF NOT EXISTS profile (
 
 CREATE TABLE IF NOT EXISTS confirmation_token (
     id BIGINT DEFAULT nextval('token_sequence'),
-    token VARCHAR(255) UNIQUE NOT NULL,
+    token VARCHAR(64) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP NOT NULL,
     confirmed_at TIMESTAMP,
+    updated_at TIMESTAMP,
     profile_id BIGINT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (profile_id) REFERENCES profile(id)

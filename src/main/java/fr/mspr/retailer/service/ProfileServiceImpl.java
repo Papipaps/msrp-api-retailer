@@ -24,8 +24,7 @@ public class ProfileServiceImpl implements ProfileService {
     private ProfileMapper profileMapper;
 
 
-    @Transactional
-    public boolean activeAccount(long id) {
+     public boolean activeAccount(long id) {
         Optional<Profile> optionalProfile = profileRepository.findById(id);
 
         if (optionalProfile.isEmpty()) {
@@ -38,6 +37,7 @@ public class ProfileServiceImpl implements ProfileService {
             throw new IllegalArgumentException("");
         }
         profile.setActive(true);
+        profileRepository.save(profile);
         return true;
     }
 
@@ -58,6 +58,7 @@ public class ProfileServiceImpl implements ProfileService {
             CustomerDTO res = new CustomerDTO();
             res.setHasError(true);
             res.setErrorMessage("User is not in database");
+            return res;
         }
         Profile profile = optionalProfile.get();
         Profile save = profileRepository.save(profileMapper.updateProfileFromDTO(customerDTO,profile));
@@ -65,6 +66,10 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     public boolean deleteProfile(long id) {
+        Optional<Profile> profileOptional = profileRepository.findById(id);
+        if(profileOptional.isEmpty()){
+            return false;
+        }
         profileRepository.deleteById(id);
         return true;
     }
