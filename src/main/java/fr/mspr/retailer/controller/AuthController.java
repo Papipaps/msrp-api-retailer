@@ -84,8 +84,8 @@ public class AuthController {
         ConfirmationToken savedToken = confirmationTokenService.saveConfirmationToken(confirmationToken);
         String link = "http://localhost:8081/api/auth/confirm?token=" + savedToken.getToken();
         emailSenderService.send(
-                profile.getEmail()
-                , emailSenderService.buildEmail(profile.getFirstName(), link, QRCodeUtils.generateQRcode(link, "utf-8", 300, 300))
+                save.getEmail()
+                , emailSenderService.buildEmail(save.getFirstName(), link, QRCodeUtils.generateQRcode(link, "utf-8", 300, 300))
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("token", token, "retailer", savedToken.getProfile()));

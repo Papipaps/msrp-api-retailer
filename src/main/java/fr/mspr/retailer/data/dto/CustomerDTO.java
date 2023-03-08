@@ -27,7 +27,7 @@ public class CustomerDTO extends BaseDTO {
     private String lastName;
     private Address address;
     private Company company;
-    private List<Order> orders;
+    private List<OrderDTO> orders;
 
     @Override
     public boolean equals(Object o) {

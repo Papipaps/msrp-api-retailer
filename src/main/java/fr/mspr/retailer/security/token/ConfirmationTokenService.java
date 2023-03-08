@@ -25,8 +25,14 @@ public class ConfirmationTokenService {
     }
 
     public String confirmToken(String token, HttpServletResponse response) {
-        ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalStateException("Token not found"));
+        Optional<ConfirmationToken> confirmationTokenOpt = confirmationTokenRepository.findByToken(token);
+
+        if (confirmationTokenOpt.isEmpty()) {
+            throw new IllegalStateException("Token not found");
+
+        }
+
+        ConfirmationToken confirmationToken = confirmationTokenOpt.get();
 
         LocalDateTime expiresAt = confirmationToken.getExpiresAt();
 
@@ -39,12 +45,16 @@ public class ConfirmationTokenService {
         }
 
         confirmationToken.setConfirmedAt(LocalDateTime.now());
-        Profile profile = confirmationToken.getProfile();
+
+
+        ConfirmationToken savedToken = confirmationTokenRepository.save(confirmationToken);
+
+        Profile profile = savedToken.getProfile();
+
         if (!profile.isActive()) {
             profileService.activeAccount(profile.getId());
-        }else {
-            confirmationTokenRepository.save(confirmationToken);
         }
+
 
         response.setHeader("token", token);
 
@@ -53,12 +63,15 @@ public class ConfirmationTokenService {
     }
 
     public ConfirmationToken update(String newToken, Profile profile) {
+//       check if token is the same as previous
         Optional<ConfirmationToken> userTokenOpt = confirmationTokenRepository.findByProfileId(profile.getId());
+//      check if token is already given
         Optional<ConfirmationToken> optionalToken = confirmationTokenRepository.findByToken(newToken);
 
         if (optionalToken.isPresent()) {
             throw new IllegalStateException("New token cannot be the same as previous");
         }
+
         String token = newToken.isEmpty() ? UUID.randomUUID().toString() : newToken;
 
         ConfirmationToken userToken = userTokenOpt.get();

@@ -1,10 +1,15 @@
 package fr.mspr.retailer;
 
+import fr.mspr.retailer.data.dto.Address;
+import fr.mspr.retailer.data.dto.Company;
 import fr.mspr.retailer.data.dto.CustomerDTO;
+import fr.mspr.retailer.data.model.Order;
+import fr.mspr.retailer.data.model.Product;
 import fr.mspr.retailer.data.model.Profile;
 import fr.mspr.retailer.repository.ProfileRepository;
 import fr.mspr.retailer.service.ProfileService;
 import fr.mspr.retailer.service.ProfileServiceImpl;
+import fr.mspr.retailer.utils.mapper.OrderCustomMapper;
 import fr.mspr.retailer.utils.mapper.ProfileMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +22,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,11 +50,30 @@ public class ProfileServiceTest {
 
     @BeforeEach
     public void initEntities() {
+
+        Product product = Product.builder()
+                .id(1L)
+                .color("bleue")
+                .price(10)
+                .stock(10)
+                .name("nom")
+                .description("description")
+                .build();
+
+//        Order order = Order.builder()
+//                .id(1L)
+//                .createdAt(LocalDateTime.now())
+//                .profile(profile)
+//                .product(product)
+//                .quantity(1)
+//                .build();
+
         profile = Profile.builder()
                 .id(1L)
                 .firstName("John")
                 .lastName("Doe")
                 .email("johndoe@example.com")
+//                .orders(Set.of(order))
                 .build();
 
         customerDTO = CustomerDTO.builder()
@@ -55,6 +81,14 @@ public class ProfileServiceTest {
                 .firstName("John")
                 .lastName("Doe")
                 .email("johndoe@example.com")
+                .company(Company.builder()
+                        .companyName("EPSI")
+                        .build())
+                .address(Address.builder()
+                        .city("CITY")
+                        .postalCode("POSTALCODE")
+                        .build())
+//                .orders(List.of(OrderCustomMapper.toDTO(order)))
                 .build();
     }
 
