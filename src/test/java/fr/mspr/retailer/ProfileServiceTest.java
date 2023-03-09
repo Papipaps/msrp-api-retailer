@@ -9,7 +9,7 @@ import fr.mspr.retailer.data.model.Profile;
 import fr.mspr.retailer.repository.ProfileRepository;
 import fr.mspr.retailer.service.ProfileService;
 import fr.mspr.retailer.service.ProfileServiceImpl;
-import fr.mspr.retailer.utils.mapper.OrderCustomMapper;
+//import fr.mspr.retailer.utils.mapper.OrderCustomMapper;
 import fr.mspr.retailer.utils.mapper.ProfileMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

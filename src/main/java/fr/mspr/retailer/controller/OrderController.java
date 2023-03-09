@@ -9,7 +9,7 @@ import fr.mspr.retailer.data.dto.ProductDTO;
 import fr.mspr.retailer.data.model.Order;
 import fr.mspr.retailer.repository.OrderRepository;
 import fr.mspr.retailer.repository.ProfileRepository;
-import fr.mspr.retailer.utils.mapper.OrderCustomMapper;
+//import fr.mspr.retailer.utils.mapper.OrderCustomMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +31,11 @@ public class OrderController {
     @Value("${app.customers.api-url}")
     private String CUSTOMER_APIURL;
 
-    @GetMapping("get/{id}")
-    private OrderDTO getOrder(@PathVariable Long id) {
-        Order order = orderRepository.findById(id).orElse(null);
-        return OrderCustomMapper.toDTO(order);
-    }
+//    @GetMapping("get/{id}")
+//    private OrderDTO getOrder(@PathVariable Long id) {
+//        Order order = orderRepository.findById(id).orElse(null);
+//        return OrderCustomMapper.toDTO(order);
+//    }
 
     @GetMapping("mock/customer/{customerId}")
     private ResponseEntity<OrderDTO[]> getOrdersByUser(@PathVariable Long customerId) {
