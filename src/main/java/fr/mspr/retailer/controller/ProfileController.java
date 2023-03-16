@@ -5,6 +5,7 @@ import fr.mspr.retailer.data.model.Profile;
 import fr.mspr.retailer.service.ProductService;
 import fr.mspr.retailer.service.ProfileService;
 import fr.mspr.retailer.utils.AuthorizationHelper;
+import fr.mspr.retailer.utils.mapper.ProfileMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,12 +26,21 @@ public class ProfileController {
     private ProfileService profileService;
 
     @Autowired
+    private ProfileMapper profileMapper;
+
+    @Autowired
     private AuthorizationHelper authorizationHelper;
 
     @GetMapping("get/{id}")
-    public ResponseEntity<CustomerDTO> getProductById(@PathVariable long id) {
+    public ResponseEntity<CustomerDTO> getProfileById(@PathVariable long id) {
         CustomerDTO product = profileService.getProfileById(id);
         return ResponseEntity.ok().body(product);
+    }
+
+    @GetMapping("getInfo")
+    public ResponseEntity<CustomerDTO> getProfile(ServletRequest request) {
+        Profile loggedprofile = authorizationHelper.getProfileFromToken(request);
+        return ResponseEntity.ok().body(profileMapper.toDTO(loggedprofile));
     }
 
     @GetMapping("/list")
@@ -54,7 +64,7 @@ public class ProfileController {
         Profile loggedprofile = authorizationHelper.getProfileFromToken(request);
         boolean isAdmin = authorizationHelper.isAdmin(loggedprofile.getId());
         if (!isAdmin) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error:","You're not allowed to do this operation"));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error:", "You're not allowed to do this operation"));
         }
         boolean b = profileService.deleteProfile(id);
         return ResponseEntity.ok().body(b);
