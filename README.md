@@ -17,4 +17,4 @@ pour l'enregistrement :
 Fournir toutes les informations est obligatoire, 
 il faudra ensuite regarder dans le server mail (le port 1080) le mail envoyé contenant le token.
 
-le parametre a mettre en header pour la clé est APIKEY
+le parametre a mettre en header pour la clé est token
