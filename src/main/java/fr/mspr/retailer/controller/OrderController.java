@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @RequestMapping("api/retailer/order")
 @RestController
@@ -56,12 +59,15 @@ public class OrderController {
         }
     }
     @GetMapping("mock/customer/{customerId}/order/{id}")
-    private ResponseEntity<ProductDTO[]> getProductByUserOrder(@PathVariable Long id, @PathVariable Long customerId) {
+    private ResponseEntity<?> getProductByUserOrder(@PathVariable Long id, @PathVariable Long customerId) {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseProducts = null;
         String url = String.format("%s/%s/orders/%s/products", CUSTOMER_APIURL,customerId, id);
-        responseProducts = restTemplate.getForEntity(url, String.class);
-
+        try{
+            responseProducts = restTemplate.getForEntity(url, String.class);
+        }catch (HttpServerErrorException e){
+            return ResponseEntity.status(500).body(Map.of("error",true,"message","external API is not responding"));
+        }
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

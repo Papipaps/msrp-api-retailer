@@ -32,7 +32,7 @@ public class ApiKeyFilter extends GenericFilterBean {
         HttpServletRequest req = (HttpServletRequest) request;
         String path = req.getRequestURI();
 
-        if (path.startsWith("/api/auth") || path.startsWith("/v2/api-docs") || path.startsWith("/swagger-ui")) {
+        if (path.startsWith("/api/auth") || path.startsWith("/retailer-swagger-docs") || path.startsWith("/swagger-ui")) {
             chain.doFilter(request, response);
             return;
         }

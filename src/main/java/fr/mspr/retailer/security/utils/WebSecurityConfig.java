@@ -22,12 +22,12 @@ import javax.servlet.DispatcherType;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private ProfileRepository profileRepository;
-    private ConfirmationTokenRepository confirmationTokenRepository;
+    private final ProfileRepository profileRepository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
 
-    public WebSecurityConfig(  ProfileRepository profileRepository, ConfirmationTokenRepository confirmationTokenRepository) {
-         this.profileRepository = profileRepository;
+    public WebSecurityConfig(ProfileRepository profileRepository, ConfirmationTokenRepository confirmationTokenRepository) {
+        this.profileRepository = profileRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
     }
 
@@ -38,17 +38,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     private static final String[] AUTH_WHITELIST = {
+            "/api/auth/**",
+            "/swagger-ui.html",
+            "/retailer-swagger-docs",
             "/swagger-resources/**",
-            "/swagger-ui.html/**",
-            "/swagger-ui/**",
             "/v2/api-docs",
-            "/api/auth/**"
-    };
+            "/webjars/**"};
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        ApiKeyFilter apiKeyFilter = new ApiKeyFilter(confirmationTokenRepository,profileRepository);
+        ApiKeyFilter apiKeyFilter = new ApiKeyFilter(confirmationTokenRepository, profileRepository);
 
         // Enable CORS and disable CSRF
         http = http.cors().and().csrf().disable();
@@ -59,8 +59,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and();
 
-         http.authorizeRequests()
-                 .anyRequest().permitAll();
+        http.authorizeRequests()
+                .antMatchers(AUTH_WHITELIST).permitAll()
+                .anyRequest().permitAll();
 
         //token filter
         http.addFilterAfter(apiKeyFilter, BasicAuthenticationFilter.class);
