@@ -34,3 +34,4 @@ build/
 
 .env
 ./database/init_entities.sql
+src/main/resources/secret.properties
