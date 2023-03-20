@@ -7,15 +7,16 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                // Get some code from a GitHub repository
-                git 'https://github.com/Papipaps/msrp-api-retailer.git'
-
-                
-                
-                
-                
+                // Checkout the code from your SCM (e.g. Git)
+                checkout scm
+            }
+        }
+        
+        stage('Build & Test') {
+            steps {
+                   
                 // Run Maven on a Unix agent.
                 sh "mvn -Dmaven.test.failure.ignore=true clean package"
 
