@@ -6,7 +6,7 @@ pipeline {
         maven "M3"
     }
 
-    stages {
+    stages { 
         stage('Checkout') {
             steps {
                 // Checkout the code from your SCM (e.g. Git)
