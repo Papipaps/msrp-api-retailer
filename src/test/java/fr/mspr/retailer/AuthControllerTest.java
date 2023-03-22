@@ -33,7 +33,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class AuthControllerTest {
 
     private static final String USERNAME = "johndoe";

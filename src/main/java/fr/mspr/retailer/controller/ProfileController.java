@@ -2,7 +2,6 @@ package fr.mspr.retailer.controller;
 
 import fr.mspr.retailer.data.dto.CustomerDTO;
 import fr.mspr.retailer.data.model.Profile;
-import fr.mspr.retailer.service.ProductService;
 import fr.mspr.retailer.service.ProfileService;
 import fr.mspr.retailer.utils.AuthorizationHelper;
 import fr.mspr.retailer.utils.mapper.ProfileMapper;
@@ -20,8 +19,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("api/retailer/profile")
 public class ProfileController {
-    @Autowired
-    private ProductService productService;
     @Autowired
     private ProfileService profileService;
 

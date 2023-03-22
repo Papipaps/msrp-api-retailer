@@ -1,4 +1,4 @@
-package fr.mspr.retailer.utils;
+package fr.mspr.retailer.utils.mapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

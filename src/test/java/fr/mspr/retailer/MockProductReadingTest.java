@@ -12,7 +12,6 @@ import fr.mspr.retailer.data.model.Profile;
 import fr.mspr.retailer.repository.ProfileRepository;
 import fr.mspr.retailer.security.token.ConfirmationToken;
 import fr.mspr.retailer.security.token.ConfirmationTokenRepository;
-import fr.mspr.retailer.service.ProductService;
 import fr.mspr.retailer.utils.AuthorizationHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,8 +38,6 @@ public class MockProductReadingTest {
     @Autowired
     private ProductController productController;
 
-    @MockBean
-    private ProductService productService;
 
     @MockBean
     private ProfileRepository profileRepository;
