@@ -64,9 +64,13 @@ public class ProfileController {
         Profile loggedprofile = authorizationHelper.getProfileFromToken(request);
         boolean isAdmin = authorizationHelper.isAdmin(loggedprofile.getId());
         if (!isAdmin) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error:", "You're not allowed to do this operation"));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "You're not allowed to do this operation"));
+        }
+        if (id == loggedprofile.getId()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("result", false, "message", "You're not allowed to delete this user"));
         }
         boolean b = profileService.deleteProfile(id);
-        return ResponseEntity.ok().body(b);
+
+        return ResponseEntity.ok().body(Map.of("result", b));
     }
 }

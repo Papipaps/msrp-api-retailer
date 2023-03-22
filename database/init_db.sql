@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS confirmation_token (
     updated_at TIMESTAMP,
     profile_id BIGINT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (profile_id) REFERENCES profile(id)
+    FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS product (

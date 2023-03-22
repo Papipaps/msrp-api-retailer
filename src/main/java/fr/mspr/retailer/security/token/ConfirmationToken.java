@@ -36,7 +36,7 @@ public class ConfirmationToken {
     private LocalDateTime confirmedAt;
     private LocalDateTime updatedAt;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.REMOVE,orphanRemoval = true)
     @JoinColumn(
             nullable = false,
             name = "profile_id"

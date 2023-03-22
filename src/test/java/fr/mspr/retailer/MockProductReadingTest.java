@@ -54,7 +54,7 @@ public class MockProductReadingTest {
 
     @BeforeEach
     public void setUp() {
-        long id = 1;
+        long id = 6;
         LocalDateTime of = LocalDateTime.of(2023, 2, 19, 13, 42, 19);
         expectedProduct = ProductDTO.builder()
                 .id(id)
